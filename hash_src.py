@@ -2,6 +2,8 @@ import sys
 
 filename = sys.argv[1]
 ca_rules = [30, 90, 150, 30, 210, 30, 90, 150]
+BITRATE = 92
+CAPACITY = 132
 
 
 def calculate_3CA(s_minus_one, s, s_plus_one, rule_number):
@@ -41,7 +43,20 @@ def apply_ca(state):
 
 
 def calculate_hash(filename):
-    with open(filename, 'r') as message_file:
-        print(message_file.read(12))
+    last_block = None
+    with open(filename, 'rb') as message_file:
+        block = message_file.read(BITRATE)
+        while block:
+            if len(block) < BITRATE:
+                last_block = block
+                break
+            else:
+                print(block)
+                block = message_file.read(BITRATE)
+        if last_block:
+            last_block = last_block + b'1'\
+                + b'0'*(BITRATE - len(last_block) - 1)
+        print(last_block)
+
 
 calculate_hash(filename)
